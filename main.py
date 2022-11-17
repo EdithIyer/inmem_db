@@ -9,23 +9,23 @@ def begin_transaction():
         print('Beginning Transaction')
 
 def get_name_values(line):
-    # line = sys.stdin.readline()
     return line[0], line[1:]
 
 transaction_tracker = []
 
 
-def run_database_helper(db_helper):
-    db = db_helper.db
+def run_database_helper():
+    # run = True
     if sys.stdin.readline().startswith('BEGIN'):
         run = True
         while run == True:
-            command = sys.stdin.readline()
+            db_helper = DatabaseHelper('./newdb.json')
+            command = sys.stdin.readline().strip('\n')
             if command.startswith('SET'):
                 keyval = command[3:]
                 sys.stdout.write(keyval)
                 name, value = get_name_values(keyval)
-                db_helper = db_helper.set(name, value)
+                db_helper.set(name, value)
                 transaction_tracker.append({'function': 'SET', 'name': name, 'value':value})
             elif command.startswith('GET'):
                 keyval = command[3:]
@@ -51,19 +51,13 @@ def run_database_helper(db_helper):
                 else:
                     most_recent = transaction_tracker[-1]
                     db_helper.rollback(most_recent)
-            elif command.startswith('SHOW'):
-                print(db_helper.show_db())
             else:
                 print('Command not found')
     else:
         print('Type Begin to Start Transaction')
 
-def main(db_helper):
-    run_database_helper(db_helper)
+def main():
+    run_database_helper()
 
 if __name__ == "__main__":
-    main(db_helper = DatabaseHelper())
-
-
-    # mydb = FoobarDB("./mydb.db")
-# print("Exit")
+    main()

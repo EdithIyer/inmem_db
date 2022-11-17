@@ -3,16 +3,32 @@ import os
 
 
 class DatabaseHelper(object):
-    def __init__(self):
-        self.create_db()
+    def __init__(self , location):
+        self.location = os.path.expanduser(location)
+        self.load(self.location)
+        # Could give an option here to save as a dictionary before committing.
 
-    def create_db(self):
-        self.db = {}
-        return True
+    def load(self , location):
+       if os.path.exists(location):
+           self._load()
+       else:
+            self.db = {}
+       return True
+
+    def _load(self):
+        self.db = json.load(open(self.location , "r"))
+
+    def dumpdb(self):
+        try:
+            json.dump(self.db , open(self.location, "w+"))
+            return True
+        except:
+            return False
 
     def set(self , key , value):
         try:
             self.db[str(key)] = value
+            self.dumpdb()
         except Exception as e:
             print(f"Error Saving Values to Database : {str(e)}")
             return False
@@ -27,6 +43,7 @@ class DatabaseHelper(object):
         if not key in self.db:
             return False
         del self.db[key]
+        self.dumpdb()
         return ##True
 
     def counter(self, value):
@@ -37,20 +54,16 @@ class DatabaseHelper(object):
 
     def resetdb(self):
         self.db={}
+        self.dumpdb()
         return True
 
     def rollback(self, most_recent_transaction):
         if most_recent_transaction.get("function") == 'SET':
-            print('Looking at a set command')
             del self.db[most_recent_transaction.get("name")]
-            # self.dumpdb()
+            self.dumpdb()
         elif most_recent_transaction.get("function") == 'DELETE':
-            print('Looking at a del command')
             self.db[str(most_recent_transaction.get("name"))] = most_recent_transaction.get("value")
-            # self.dumpdb()
+            self.dumpdb()
         else:
             return 'TRANSACTION NOT FOUND'
-
-    def show_db(self):
-        return self.db
 
