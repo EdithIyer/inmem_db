@@ -4,9 +4,7 @@ import os
 
 class DatabaseHelper(object):
     def __init__(self , location):
-        self.location = os.path.expanduser(location)
-        self.load(self.location)
-        # Could give an option here to save as a dictionary before committing.
+        return
 
     def load(self , location):
        if os.path.exists(location):
@@ -15,55 +13,40 @@ class DatabaseHelper(object):
             self.db = {}
        return True
 
-    def _load(self):
-        self.db = json.load(open(self.location , "r"))
-
-    def dumpdb(self):
+    def set(self , key , value, ext_db):
         try:
-            json.dump(self.db , open(self.location, "w+"))
-            return True
-        except:
-            return False
-
-    def set(self , key , value):
-        try:
-            self.db[str(key)] = value
-            self.dumpdb()
+            ext_db[str(key)] = value
         except Exception as e:
             print(f"Error Saving Values to Database : {str(e)}")
             return False
 
-    def get(self , key):
+    def get(self, key, ext_db):
         try:
-            return self.db[key]
+            return ext_db[key]
         except KeyError:
             return 'NULL'
 
-    def delete(self , key):
-        if not key in self.db:
+    def delete(self , key, ext_db):
+        if not key in ext_db:
             return False
-        del self.db[key]
-        self.dumpdb()
-        return ##True
+        del ext_db[key]
+        return
 
-    def counter(self, value):
-        if len(self.db) > 0:
-            return sum(val == value for val in self.db.values())
+    def counter(self, value, ext_db):
+        if len(ext_db) > 0:
+            return sum(val == value for val in ext_db.values())
         else:
             return 'NULL'
 
-    def resetdb(self):
-        self.db={}
-        self.dumpdb()
+    def resetdb(self, ext_db):
+        ext_db={}
         return True
 
-    def rollback(self, most_recent_transaction):
+    def rollback(self, most_recent_transaction, ext_db):
         if most_recent_transaction.get("function") == 'SET':
-            del self.db[most_recent_transaction.get("name")]
-            self.dumpdb()
+            del ext_db[most_recent_transaction.get("name")]
         elif most_recent_transaction.get("function") == 'DELETE':
-            self.db[str(most_recent_transaction.get("name"))] = most_recent_transaction.get("value")
-            self.dumpdb()
+            ext_db[str(most_recent_transaction.get("name"))] = most_recent_transaction.get("value")
         else:
             return 'TRANSACTION NOT FOUND'
 

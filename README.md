@@ -33,3 +33,10 @@ Some methods for manipulating the data:<br>
 * `resetdb`
 * `rollback`
 
+## Notes
+### On memory:
+Data is stored in a dictionary which means that the storage does not necessarily increase with each addition. Depending on the number of key value pairs in it at a given time, there is some leeway before storage increases.<br>
+
+### On failings:
+1. The `BEGIN` and `COMMIT` functionality is not implemented correctly in this version. I was unable to figure out a solution that allowed for both storage without the `BEGIN`/`COMMIT` functionality and without it. <br>
+2. The "database" is not implemented within the python class, which is not ideal, because its called in every single function.<br>
