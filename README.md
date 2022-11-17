@@ -1,5 +1,7 @@
 # In Memory Database Project
 
+*My first foray into building out a CLI and working with data!*
+<br><br>
 This project utilizes python to manipulate an in memory database.
 A Python class found in the `dbhelper.py` file instantiates a database and has a variety of methods to manipulate the database. Additionally, there is a `main.py` function that can be run from the command line in order to execute commands interactively.<br>
 <br>
