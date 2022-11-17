@@ -9,7 +9,6 @@ def begin_transaction():
         print('Beginning Transaction')
 
 def get_name_values(line):
-    # line = sys.stdin.readline()
     return line[0], line[1:]
 
 transaction_tracker = []
